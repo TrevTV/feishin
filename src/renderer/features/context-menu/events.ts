@@ -30,6 +30,7 @@ export type ContextMenuItemType =
     | 'setRating'
     | 'deletePlaylist'
     | 'createPlaylist'
+    | 'moveNext'
     | 'moveToBottomOfQueue'
     | 'moveToTopOfQueue'
     | 'removeFromQueue'

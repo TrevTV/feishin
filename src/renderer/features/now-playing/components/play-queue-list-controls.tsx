@@ -29,13 +29,24 @@ interface PlayQueueListOptionsProps {
 
 export const PlayQueueListControls = ({ type, tableRef }: PlayQueueListOptionsProps) => {
     const { t } = useTranslation();
-    const { clearQueue, moveToBottomOfQueue, moveToTopOfQueue, shuffleQueue, removeFromQueue } =
+    const { clearQueue, moveToBottomOfQueue, moveToTopOfQueue, shuffleQueue, removeFromQueue, moveNext } =
         useQueueControls();
 
     const { pause } = usePlayerControls();
 
     const playbackType = usePlaybackType();
     const setCurrentTime = useSetCurrentTime();
+
+    const handleMoveNext = () => {
+      const selectedRows = tableRef?.current?.grid.api.getSelectedRows();
+      const uniqueIds = selectedRows?.map((row) => row.uniqueId);
+      if (!uniqueIds?.length) return;
+
+      const playerData = moveNext(uniqueIds);
+      if (playbackType === PlaybackType.LOCAL) {
+          mpvPlayer!.setQueueNext(playerData);
+      }
+  };
 
     const handleMoveToBottom = () => {
         const selectedRows = tableRef?.current?.grid.api.getSelectedRows();
@@ -122,6 +133,15 @@ export const PlayQueueListControls = ({ type, tableRef }: PlayQueueListOptionsPr
                     onClick={handleShuffleQueue}
                 >
                     <RiShuffleLine size="1.1rem" />
+                </Button>
+                <Button
+                    compact
+                    size="md"
+                    tooltip={{ label: t('action.moveNext', { postProcess: 'sentenceCase' }) }}
+                    variant="default"
+                    onClick={handleMoveNext}
+                >
+                    <RiArrowDownLine size="1.1rem" />
                 </Button>
                 <Button
                     compact

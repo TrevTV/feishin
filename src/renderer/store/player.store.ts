@@ -71,6 +71,7 @@ export interface PlayerSlice extends PlayerState {
         getPlayerData: () => PlayerData;
         getQueueData: () => QueueData;
         incrementPlayCount: (ids: string[]) => string[];
+        moveNext: (uniqueIds: string[]) => PlayerData;
         moveToBottomOfQueue: (uniqueIds: string[]) => PlayerData;
         moveToTopOfQueue: (uniqueIds: string[]) => PlayerData;
         next: () => PlayerData;
@@ -477,6 +478,41 @@ export const usePlayerStore = create<PlayerSlice>()(
                             }
 
                             return foundUniqueIds;
+                        },
+                        moveNext: (uniqueIds) => {
+                            const queue = get().queue.default;
+
+                            const songsToMove = queue.filter((song) =>
+                                uniqueIds.includes(song.uniqueId),
+                            );
+
+                            const currentSong = get().current.song;
+                            const currentPosition =
+                                get().current.index -
+                                queue
+                                    .slice(0, get().current.index)
+                                    .filter((song) => uniqueIds.includes(song.uniqueId)).length;
+
+                            const songsToStay = queue.filter(
+                                (song) => !uniqueIds.includes(song.uniqueId),
+                            );
+
+                            const newQueue = [
+                                ...songsToStay.slice(0, currentPosition + 1),
+                                ...songsToMove,
+                                ...songsToStay.slice(currentPosition + 1),
+                            ];
+
+                            const newCurrentSongIndex = newQueue.findIndex(
+                                (song) => song.uniqueId === currentSong?.uniqueId,
+                            );
+
+                            set((state) => {
+                                state.queue.default = newQueue;
+                                state.current.index = newCurrentSongIndex;
+                            });
+
+                            return get().actions.getPlayerData();
                         },
                         moveToBottomOfQueue: (uniqueIds) => {
                             const queue = get().queue.default;
@@ -1021,6 +1057,7 @@ export const useQueueControls = () =>
         (state) => ({
             addToQueue: state.actions.addToQueue,
             clearQueue: state.actions.clearQueue,
+            moveNext: state.actions.moveNext,
             moveToBottomOfQueue: state.actions.moveToBottomOfQueue,
             moveToTopOfQueue: state.actions.moveToTopOfQueue,
             removeFromQueue: state.actions.removeFromQueue,
