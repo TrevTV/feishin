@@ -581,7 +581,17 @@ export const ContextMenuProvider = ({ children }: ContextMenuProviderProps) => {
     );
 
     const playbackType = usePlaybackType();
-    const { moveToBottomOfQueue, moveToTopOfQueue, removeFromQueue } = useQueueControls();
+    const { moveToBottomOfQueue, moveToTopOfQueue, removeFromQueue, moveNext } = useQueueControls();
+
+    const handleMoveNext = useCallback(() => {
+        const uniqueIds = ctx.dataNodes?.map((row) => row.data.uniqueId);
+        if (!uniqueIds?.length) return;
+
+        const playerData = moveNext(uniqueIds);
+        if (playbackType === PlaybackType.LOCAL) {
+            mpvPlayer!.setQueueNext(playerData);
+        }
+    }, [ctx.dataNodes, moveNext, playbackType]);
 
     const handleMoveToBottom = useCallback(() => {
         const uniqueIds = ctx.dataNodes?.map((row) => row.data.uniqueId);
@@ -688,6 +698,12 @@ export const ContextMenuProvider = ({ children }: ContextMenuProviderProps) => {
                 label: t('page.contextMenu.deselectAll', { postProcess: 'sentenceCase' }),
                 leftIcon: <RiCloseCircleLine size="1.1rem" />,
                 onClick: handleDeselectAll,
+            },
+            moveNext: {
+                id: 'moveNext',
+                label: t('page.contextMenu.moveNext', { postProcess: 'sentenceCase' }),
+                leftIcon: <RiAddCircleFill size="1.1rem" />,
+                onClick: handleMoveNext,
             },
             moveToBottomOfQueue: {
                 id: 'moveToBottomOfQueue',
