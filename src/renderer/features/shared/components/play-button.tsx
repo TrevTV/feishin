@@ -1,5 +1,5 @@
 import { UnstyledButton } from '@mantine/core';
-import { RiPlayFill } from 'react-icons/ri';
+import { RiPlayFill, RiShuffleFill } from 'react-icons/ri';
 import styled from 'styled-components';
 
 const MotionButton = styled(UnstyledButton)`
@@ -40,6 +40,18 @@ export const PlayButton = ({ ...props }: any) => {
             w="45px"
         >
             <RiPlayFill size={20} />
+        </MotionButton>
+    );
+};
+
+export const ShuffleButton = ({ ...props }: any) => {
+    return (
+        <MotionButton
+            {...props}
+            h="35px"
+            w="35px"
+        >
+            <RiShuffleFill size={20} />
         </MotionButton>
     );
 };

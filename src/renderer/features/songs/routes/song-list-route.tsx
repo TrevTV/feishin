@@ -3,7 +3,13 @@ import type { AgGridReact as AgGridReactType } from '@ag-grid-community/react/li
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { GenreListSort, LibraryItem, SongListQuery, SortOrder } from '/@/renderer/api/types';
+import {
+    GenreListSort,
+    LibraryItem,
+    SongListQuery,
+    SongListSort,
+    SortOrder,
+} from '/@/renderer/api/types';
 import { ListContext } from '/@/renderer/context/list-context';
 import { useGenreList } from '/@/renderer/features/genres';
 import { usePlayQueueAdd } from '/@/renderer/features/player';
@@ -95,10 +101,20 @@ const TrackListRoute = () => {
             : itemCountCheck.data?.totalRecordCount;
 
     const handlePlay = useCallback(
-        async (args: { initialSongId?: string; playType: Play }) => {
+        async (args: { initialSongId?: string; playType: Play; shuffle?: boolean }) => {
             if (!itemCount || itemCount === 0) return;
-            const { initialSongId, playType } = args;
-            const query: SongListQuery = { startIndex: 0, ...songListFilter };
+            const { initialSongId, playType, shuffle } = args;
+            let query: SongListQuery = {
+                startIndex: 0,
+                ...songListFilter,
+            };
+
+            if (shuffle) {
+                query = {
+                    ...query,
+                    sortBy: SongListSort.RANDOM,
+                };
+            }
 
             if (albumArtistId) {
                 handlePlayQueueAdd?.({

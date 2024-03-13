@@ -216,6 +216,10 @@ export const getSongsByQuery = async (args: {
         },
     );
 
+    if (queryFilter.sortBy === SongListSort.RANDOM && res) {
+        res.items = res.items.sort(() => Math.random() - 0.5);
+    }
+
     return res;
 };
 
