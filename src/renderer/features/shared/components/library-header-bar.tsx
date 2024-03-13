@@ -1,7 +1,10 @@
 import { ReactNode } from 'react';
 import { Box } from '@mantine/core';
 import { Paper, PaperProps, SpinnerIcon, TextTitle } from '/@/renderer/components';
-import { PlayButton as PlayBtn } from '/@/renderer/features/shared/components/play-button';
+import {
+    PlayButton as PlayBtn,
+    ShuffleButton as ShuffleBtn,
+} from '/@/renderer/features/shared/components/play-button';
 import styled from 'styled-components';
 
 interface LibraryHeaderBarProps {
@@ -54,6 +57,18 @@ const PlayButton = ({ onClick }: PlayButtonProps) => {
     );
 };
 
+const ShuffleButton = ({ onClick }: PlayButtonProps) => {
+    return (
+        <Box>
+            <ShuffleBtn
+                h="35px"
+                w="35px"
+                onClick={onClick}
+            />
+        </Box>
+    );
+};
+
 const Badge = styled(Paper)`
     padding: 0.3rem 1rem;
     font-weight: 600;
@@ -70,4 +85,5 @@ const HeaderBadge = ({ children, isLoading, ...props }: HeaderBadgeProps) => {
 
 LibraryHeaderBar.Title = Title;
 LibraryHeaderBar.PlayButton = PlayButton;
+LibraryHeaderBar.ShuffleButton = ShuffleButton;
 LibraryHeaderBar.Badge = HeaderBadge;

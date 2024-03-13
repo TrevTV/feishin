@@ -1,4 +1,4 @@
-import { ChangeEvent, MutableRefObject, useEffect, useRef } from 'react';
+import { ChangeEvent, MutableRefObject } from 'react';
 import type { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
 import { Flex, Group, Stack } from '@mantine/core';
 import debounce from 'lodash/debounce';
@@ -8,7 +8,9 @@ import { PageHeader, SearchInput } from '/@/renderer/components';
 import { FilterBar, LibraryHeaderBar } from '/@/renderer/features/shared';
 import { SongListHeaderFilters } from '/@/renderer/features/songs/components/song-list-header-filters';
 import { useContainerQuery } from '/@/renderer/hooks';
-import { SongListFilter, useCurrentServer } from '/@/renderer/store';
+import { useListFilterRefresh } from '/@/renderer/hooks/use-list-filter-refresh';
+import { SongListFilter, useCurrentServer, useListStoreActions } from '/@/renderer/store';
+import { ListDisplayType } from '/@/renderer/types';
 import { usePlayButtonBehavior } from '/@/renderer/store/settings.store';
 import { VirtualInfiniteGridRef } from '/@/renderer/components/virtual-grid';
 import { useDisplayRefresh } from '/@/renderer/hooks/use-display-refresh';
@@ -30,6 +32,10 @@ export const SongListHeader = ({
 }: SongListHeaderProps) => {
     const { t } = useTranslation();
     const server = useCurrentServer();
+    const { pageKey, handlePlay, customFilters } = useListContext();
+    const { setFilter, setTablePagination } = useListStoreActions();
+
+    const { display, filter } = useListStoreByKey({ key: pageKey });
     const cq = useContainerQuery();
     const genreRef = useRef<string>();
 
@@ -74,6 +80,11 @@ export const SongListHeader = ({
                     <LibraryHeaderBar>
                         <LibraryHeaderBar.PlayButton
                             onClick={() => handlePlay?.({ playType: playButtonBehavior })}
+                        />
+                        <LibraryHeaderBar.ShuffleButton
+                            onClick={() => {
+                                handlePlay?.({ playType: playButtonBehavior, shuffle: true });
+                            }}
                         />
                         <LibraryHeaderBar.Title>
                             {title || t('page.trackList.title', { postProcess: 'titleCase' })}

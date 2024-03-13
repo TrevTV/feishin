@@ -4,7 +4,7 @@ import { Play } from '/@/renderer/types';
 
 interface ListContextProps {
     customFilters?: Record<string, unknown>;
-    handlePlay?: (args: { initialSongId?: string; playType: Play }) => void;
+    handlePlay?: (args: { initialSongId?: string; playType: Play; shuffle?: boolean }) => void;
     id?: string;
     pageKey: ListKey;
 }
