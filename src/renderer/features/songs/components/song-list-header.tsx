@@ -1,4 +1,4 @@
-import { ChangeEvent, MutableRefObject } from 'react';
+import { ChangeEvent, MutableRefObject, useEffect, useRef } from 'react';
 import type { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
 import { Flex, Group, Stack } from '@mantine/core';
 import debounce from 'lodash/debounce';
@@ -32,11 +32,6 @@ export const SongListHeader = ({
 }: SongListHeaderProps) => {
     const { t } = useTranslation();
     const server = useCurrentServer();
-    const { pageKey, handlePlay, customFilters } = useListContext();
-    const { setFilter, setTablePagination } = useListStoreActions();
-
-    const { display, filter } = useListStoreByKey({ key: pageKey });
-    const cq = useContainerQuery();
     const genreRef = useRef<string>();
 
     const { customFilters, filter, handlePlay, refresh, search } = useDisplayRefresh({
@@ -69,7 +64,6 @@ export const SongListHeader = ({
 
     return (
         <Stack
-            ref={cq.ref}
             spacing={0}
         >
             <PageHeader backgroundColor="var(--titlebar-bg)">
@@ -98,7 +92,6 @@ export const SongListHeader = ({
                     <Group>
                         <SearchInput
                             defaultValue={filter.searchTerm}
-                            openedWidth={cq.isMd ? 250 : cq.isSm ? 200 : 150}
                             onChange={handleSearch}
                         />
                     </Group>
